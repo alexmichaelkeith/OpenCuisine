@@ -1,13 +1,7 @@
-CREATE DATABASE knights;
-use knights;
+CREATE DATABASE OpenCuisine;
+use OpenCuisine;
 
-CREATE TABLE favorite_colors (
+CREATE TABLE recipes (
   name VARCHAR(20),
-  color VARCHAR(10)
+  time VARCHAR(10)
 );
-
-INSERT INTO favorite_colors
-  (name, color)
-VALUES
-  ('Lancelot', 'blue'),
-  ('Galahad', 'yellow');
