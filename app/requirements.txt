@@ -1,2 +1,5 @@
 flask
 mysql-connector
+flask-wtf
+flask_mysqldb
+passlib
