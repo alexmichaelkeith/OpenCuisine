@@ -5,7 +5,7 @@ services:
     build: db
     image: mysql/mysql-server:latest
     ports:
-      - "32000:3306"
+      - 3306
     environment:
       MYSQL_ROOT_PASSWORD: root
     #volumes:
@@ -16,4 +16,4 @@ services:
     links:
       - db
     ports:
-      - "8000:8000"
+      - 8000
