@@ -1,20 +1,18 @@
-version: "3.9"
+version: "3.0"
 services:
-  
+  app:
+    build: app
+    links:
+      - db
+    ports:
+      - 5000
   db:
     build: db
     image: mysql/mysql-server:latest
     ports:
       - "3306:3306"
     environment:
+      MYSQL_USER: myuser
+      MYSQL_PASSWORD: mypass
       MYSQL_DATABASE: OpenCuisine
       MYSQL_ROOT_PASSWORD: root
-    #volumes:
-      #- ./db:/docker-entrypoint-initdb.d/:ro
-
-  app:
-    build: app
-    links:
-      - db
-    ports:
-      - 8000
