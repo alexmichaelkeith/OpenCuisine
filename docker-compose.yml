@@ -14,5 +14,6 @@ services:
     environment:
       MYSQL_USER: myuser
       MYSQL_PASSWORD: mypass
-      MYSQL_DATABASE: OpenCuisine
-      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: opencuisine
+    volumes:
+      - ./db:/docker-entrypoint-initdb.d/:ro
