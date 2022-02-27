@@ -1,7 +1,7 @@
 import mysql.connector
 
 def test():
-    connection = mysql.connector.connect(host='localhost',database='OpenCuisine', user = 'myuser', password = 'mypass', port=3306)
+    connection = mysql.connector.connect(host='localhost',database='opencuisine', user = 'root', password = 'root', port=3306)
     if connection.is_connected():
         db_Info = connection.get_server_info()
         print("Connected to MySQL Server version ", db_Info)
