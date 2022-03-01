@@ -1,16 +1,29 @@
+from typing import List, Dict
+from flask import Flask
 import mysql.connector
+import json
 
-def test():
-    connection = mysql.connector.connect(host='localhost',database='opencuisine', user = 'root', password = 'root', port=3306)
-    if connection.is_connected():
-        db_Info = connection.get_server_info()
-        print("Connected to MySQL Server version ", db_Info)
-        cursor = connection.cursor()
-        cursor.execute("select database();")
-        record = cursor.fetchone()
-        print("You're connected to database: ", record)
-        #print("Failed")
+
+def favorite_colors():
+    config = {
+        'user': 'root',
+        'password': 'root',
+        'host': 'localhost',
+        'port': '3306',
+        'database': 'opencuisine'
+    }
+    connection = mysql.connector.connect(**config)
+    cursor = connection.cursor()
+    cursor.execute('SELECT * FROM recipes')
+    results = [{name: color} for (name, color) in cursor]
+    connection.close()
+    print(results)
+
+
+
+
         
 if __name__ == '__main__':
   
-    test()
+    favorite_colors()
+

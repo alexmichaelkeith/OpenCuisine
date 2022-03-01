@@ -3,27 +3,17 @@ from wtforms import Form, StringField, TextAreaField, PasswordField, validators
 from passlib.hash import sha256_crypt
 import mysql.connector
 
+
+config = {
+    'user': 'root',
+    'password': 'root',
+    'host': 'localhost',
+    'port': '3306',
+    'database': 'opencuisine'
+    }
+
+
 app = Flask(__name__)
-  
-def test():
-    try:
-        cur = mysql.connection.cursor()
-
-        #cur.execute("INSERT INTO users(name, email, username, password) VALUES(%s, %s, %s, %s)", (name, email, username, password))
-        cur.execute("SHOW TABLES")
-
-        # Commit to DB
-        mysql.connection.commit()
-
-        # Close connection
-        cur.close()
-    except:
-        print("Failed")
-        print("Failed")
-        print("Failed")
-        print("Failed")
-
-
 
 @app.route('/')
 def hello_world():
@@ -33,7 +23,6 @@ def hello_world():
 
 @app.route('/recipes')
 def recipes():
-    test()
     return render_template('articles.html')
 
 
@@ -49,6 +38,14 @@ def add():
     form = RegisterForm(request.form)
     if request.method == 'POST' and form.validate():
          name = form.name.data
+
+
+         connection = mysql.connector.connect(**config)
+         cursor = connection.cursor()
+         cursor.execute('SELECT * FROM recipes')
+         results = [{name: color} for (name, color) in cursor]
+         connection.close()
+         print(results)
 
          #Create Cursor
          #cur = mysql.connection.cursor()
