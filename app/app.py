@@ -4,66 +4,13 @@ from passlib.hash import sha256_crypt
 import mysql.connector
 
 
-config = {
-    'user': 'root',
-    'password': 'root',
-    'host': 'localhost',
-    'port': '3306',
-    'database': 'opencuisine'
-    }
-
-
-app = Flask(__name__)
-
-@app.route('/')
-def hello_world():
-    
-    return render_template('home.html')
-
-
-@app.route('/recipes')
-def recipes():
-    return render_template('articles.html')
-
-
-@app.route('/article/<string:id>/')
-def article(id):
-    return render_template('article.html', id=id)
-
-class AddForm(Form):
-    name = StringField('Name', [validators.Length(min=1, max=50)])
-
-@app.route('/add', methods=['GET', 'POST'])
-def add():
-    form = RegisterForm(request.form)
-    if request.method == 'POST' and form.validate():
-         name = form.name.data
-
-
-         connection = mysql.connector.connect(**config)
-         cursor = connection.cursor()
-         cursor.execute('SELECT * FROM recipes')
-         results = [{name: color} for (name, color) in cursor]
-         connection.close()
-         print(results)
-
-         #Create Cursor
-         #cur = mysql.connection.cursor()
-
-         #cur.execute("INSERT INTO users(name, email, username, password) VALUES(%s, %s, %s, %s)", (name, email, username, password))
-         #cur.execute("INSERT INTO recipes(name) VALUES(%s)", (name))
-
-         # Commit to DB
-         #mysql.connection.commit()
-
-         # Close connection
-         #cur.close()
-
-         flash('Recipe has been added', 'success')
-         return redirect(url_for('recipes'))
-
-
-    return render_template('add.html', form=form)
+mydb = mysql.connector.connect(
+    user='root',
+    password='root',
+    host='localhost',
+    port='3306',
+    database='opencuisine'
+)
 
 
 class RegisterForm(Form):
@@ -76,9 +23,64 @@ class RegisterForm(Form):
     ])
     confirm = PasswordField('Confirm Password')
 
+class AddForm(Form):
+    name = StringField('Name', [validators.Length(min=1, max=50)])
+    color = StringField('Color', [validators.Length(min=1, max=50)])
+
+
+def Recipes():
+    cur = mydb.cursor(dictionary=True)
+    sql = "SELECT * FROM recipes"
+    cur.execute(sql)
+    results = cur.fetchall()
+    cur.close()
+    return results
+
+
+app = Flask(__name__)
+
+@app.route('/')
+def home():
+    
+    return render_template('home.html')
+
+
+@app.route('/recipes')
+def recipes():
+
+    return render_template('recipes.html', recipes = Recipes())
+
+
+@app.route('/recipe/<string:name>/')
+def recipe(name):
+
+    return render_template('recipe.html', name=name)
+
+
+@app.route('/add', methods=['GET', 'POST'])
+def add():
+    
+    form = AddForm(request.form)
+    if request.method == 'POST' and form.validate():
+         name = form.name.data
+         color = form.color.data
+
+         cur = mydb.cursor(dictionary=True)
+         sql = "INSERT INTO recipes (name, color) VALUES (%s, %s)"
+         val = (name, color)
+         cur.execute(sql, val)
+         mydb.commit()
+         cur.close()
+
+         flash('Recipe has been added', 'success')
+         return redirect(url_for('recipes'))
+
+    return render_template('add.html', form=form)
+
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
+
     form = RegisterForm(request.form)
     if request.method == 'POST' and form.validate():
          name = form.name.data
@@ -86,17 +88,12 @@ def register():
          username = form.username.data
          password = sha256_crypt.encrypt(str(form.password.data))
 
-         #Create Cursor
-         #cur = mysql.connection.cursor()
-
-         #cur.execute("INSERT INTO users(name, email, username, password) VALUES(%s, %s, %s, %s)", (name, email, username, password))
-         #cur.execute("INSERT INTO recipes(name) VALUES(%s)", [name])
-
-         # Commit to DB
-         #mysql.connection.commit()
-
-         # Close connection
-         #cur.close()
+         cur = mydb.cursor(dictionary=True)
+         sql = "INSERT INTO users (name, email, username, password) VALUES (%s, %s, %s, %s)"
+         val = (name, email, username, password)
+         cur.execute(sql, val)
+         mydb.commit()
+         cur.close()
 
          flash('You are now registered and can login', 'success')
          return redirect(url_for('login'))
@@ -116,8 +113,10 @@ def login():
         cur = mysql.connection.cursor()
 
         # Get user by username
+        cur = mydb.cursor(dictionary=True)
+        results = cur.fetchall()
         result = cur.execute("Select * FROM users WHERE username = %s", [username])
-
+        cur.close()
         if result > 0:
             # Get stored hash
             data = cur.fetchone()
@@ -130,8 +129,8 @@ def login():
                 app.logger.info('PASSWORD NOT MATCHED')
         else:
             app.logger.info('NO USER')
-    return render_template('login.html')
 
+    return render_template('login.html')
 
 
 # main driver function
@@ -139,5 +138,3 @@ if __name__ == '__main__':
   
     app.secret_key='secret_key123'
     app.run(port = 5000, host="0.0.0.0", debug=True)
-
-
