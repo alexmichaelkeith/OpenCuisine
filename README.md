@@ -1,7 +1,7 @@
+<p align="center">![OpenCuisine.png](https://github.com/alexmichaelkeith/OpenCuisine/blob/main/icon.png)</p>
 <h1 align="center">
-![OpenCuisine.png](https://github.com/alexmichaelkeith/OpenCuisine/blob/main/icon.png)
 OpenCuisine
-</h1>
+
 
 # Installation
 
