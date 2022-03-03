@@ -5,7 +5,7 @@ CREATE TABLE recipes (
   name VARCHAR(20),
   color VARCHAR(10)
 );
-CREATE TABLE users(
+CREATE TABLE users (
   id INT(11) AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(100),
   email VARCHAR(100),

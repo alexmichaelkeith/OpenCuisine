@@ -1,3 +1,4 @@
+from asyncio.windows_events import NULL
 from flask import Flask, render_template, flash, redirect, url_for, session, logging, request
 from wtforms import Form, StringField, TextAreaField, PasswordField, validators
 from passlib.hash import sha256_crypt
@@ -102,7 +103,7 @@ def register():
     return render_template('register.html', form=form)
 
 
-@app.route('/login', methods=['GET', 'POSR'])
+@app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         # Get Form Fields
@@ -110,18 +111,14 @@ def login():
         password_candidate = request.form['password']
 
         # Create cursor
-        cur = mysql.connection.cursor()
-
-        # Get user by username
         cur = mydb.cursor(dictionary=True)
-        results = cur.fetchall()
+        # Get user by username
         result = cur.execute("Select * FROM users WHERE username = %s", [username])
-        cur.close()
-        if result > 0:
+        if result is not None:
+            print(result)
             # Get stored hash
             data = cur.fetchone()
             password = data['password']
-
             # Compare Passwords
             if sha256_crypt.verify(password_candidate, password):
                 app.logger.info('PASSWORD MATCHED')
@@ -129,7 +126,6 @@ def login():
                 app.logger.info('PASSWORD NOT MATCHED')
         else:
             app.logger.info('NO USER')
-
     return render_template('login.html')
 
 
