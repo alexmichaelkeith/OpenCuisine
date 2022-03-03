@@ -1,8 +1,9 @@
-![Freighter.png](https://github.com/alexmichaelkeith/EmulatorFreighter/blob/main/config/images/Freighter.png)
+![OpenCuisine.png](https://github.com/alexmichaelkeith/OpenCuisine/blob/main/icon.png)
 <h1 align="center">
 OpenCuisine
 </h1>
-Installation
+#Installation
+
 
 ```shell
 docker-compose up -d
