@@ -1,6 +1,4 @@
-<div align="center">
-  ![OpenCuisine.png](https://github.com/alexmichaelkeith/OpenCuisine/blob/main/icon.png)
-</div>
+![OpenCuisine.png](https://github.com/alexmichaelkeith/OpenCuisine/blob/main/icon.png)
 <h1 align="center">
 OpenCuisine
 
