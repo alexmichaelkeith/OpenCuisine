@@ -7,7 +7,10 @@
 <h1 align="center">
                   
 OpenCuisine
-## A recipe management Flask web application built with an SQL database
+<p align="center">
+A recipe management Flask web application built with an SQL database
+</p>
+  
 
 
 # Installation
