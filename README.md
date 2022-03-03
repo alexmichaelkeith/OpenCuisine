@@ -9,3 +9,5 @@ OpenCuisine
 ```shell
 docker-compose up -d
 ```
+# Requirements
+Docker
