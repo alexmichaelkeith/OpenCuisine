@@ -4,8 +4,7 @@
 
 
 
-<h1 align="center">
-                  
+<h1 align="center">         
 OpenCuisine
 <p align="center">
 ## A recipe management Flask web application built with an SQL database
