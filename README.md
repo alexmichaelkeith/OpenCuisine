@@ -1,4 +1,7 @@
-<img align="center" width="100" height="100" src="https://github.com/alexmichaelkeith/OpenCuisine/blob/main/icon.png">
+<p align="center">
+  <img width="460" height="300" src="https://github.com/alexmichaelkeith/OpenCuisine/blob/main/icon.png">
+</p>
+
 
 
 <h1 align="center">
