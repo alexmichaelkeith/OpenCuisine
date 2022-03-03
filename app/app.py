@@ -3,7 +3,7 @@ from flask import Flask, render_template, flash, redirect, url_for, session, log
 from wtforms import Form, StringField, TextAreaField, PasswordField, validators
 from passlib.hash import sha256_crypt
 import mysql.connector
-
+from functools import wraps
 
 mydb = mysql.connector.connect(
     user='root',
@@ -28,6 +28,17 @@ class AddForm(Form):
     name = StringField('Name', [validators.Length(min=1, max=50)])
     color = StringField('Color', [validators.Length(min=1, max=50)])
 
+# Check if user logged in
+def is_logged_in(f):
+    @wraps(f)
+    def wrap(*args, **kwargs):
+        if 'logged_in' in session:
+            return f(*args, **kwargs)
+        else:
+            flash('Unauthorized, Please login', 'danger')
+            return redirect(url_for('login'))
+    return wrap
+
 
 def Recipes():
     cur = mydb.cursor(dictionary=True)
@@ -42,19 +53,17 @@ app = Flask(__name__)
 
 @app.route('/')
 def home():
-    
     return render_template('home.html')
 
-
 @app.route('/recipes')
+@is_logged_in
 def recipes():
-
     return render_template('recipes.html', recipes = Recipes())
 
 
 @app.route('/recipe/<string:name>/')
+@is_logged_in
 def recipe(name):
-
     return render_template('recipe.html', name=name)
 
 
@@ -114,19 +123,37 @@ def login():
         cur = mydb.cursor(dictionary=True)
         # Get user by username
         result = cur.execute("Select * FROM users WHERE username = %s", [username])
-        if result is not None:
-            print(result)
-            # Get stored hash
+
+        try:
             data = cur.fetchone()
             password = data['password']
+
             # Compare Passwords
             if sha256_crypt.verify(password_candidate, password):
-                app.logger.info('PASSWORD MATCHED')
+                session['logged_in'] = True
+                session['username'] = username
+
+                flash('You are now logged in', 'success')
+                return redirect(url_for('recipes'))
             else: 
-                app.logger.info('PASSWORD NOT MATCHED')
-        else:
-            app.logger.info('NO USER')
+                error = 'Invalid Login'
+                return render_template('login.html', error=error)
+        except:
+            error = 'Username not found'
+            return render_template('login.html', error=error)
+
+        trash = cur.fetchall() 
+        cur.close()
     return render_template('login.html')
+
+
+@app.route('/logout')
+@is_logged_in
+def logout():
+    flash('You are now logged out', 'success')
+    session.clear()
+    return redirect(url_for('login'))
+
 
 
 # main driver function
