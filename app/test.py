@@ -4,12 +4,12 @@ from flask import Flask
 import mysql.connector
 import json
 from passlib.hash import sha256_crypt
-
-
+import time
+time.sleep(30)
 mydb = mysql.connector.connect(
     user='root',
     password='root',
-    host='localhost',
+    host='192.168.200.198',
     port='3306',
     database='opencuisine'
 )
@@ -36,21 +36,8 @@ def test():
     # Create cursor
     cur = mydb.cursor(dictionary=True)
     # Get user by username
-    result = cur.execute("Select * FROM users WHERE username = 'alex'")
+    result = cur.execute("Select * FROM users")
     print(result)
-
-    if result is not NULL:
-        # Get stored hash
-        data = cur.fetchone()
-        password = data['password']
-        # Compare Passwords
-        if sha256_crypt.verify(password_candidate, password):
-            print('PASSWORD MATCHED')
-        else: 
-            print('PASSWORD NOT MATCHED')
-    else:
-        print('NO USER')
-    # Close connection
     trash = cur.fetchall()
     cur.close()
 

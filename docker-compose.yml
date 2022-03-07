@@ -3,9 +3,12 @@ services:
   app:
     build: ./app
     links:
-      - db
+      - db:db
     ports:
       - "5000:5000"
+    networks:
+      - app-tier
+      
   db:
     image: mysql:latest
     ports:
@@ -14,3 +17,9 @@ services:
       MYSQL_ROOT_PASSWORD: root
     volumes:
       - ./db:/docker-entrypoint-initdb.d/:ro
+    networks:
+      - app-tier
+
+networks:
+  app-tier:
+    driver: bridge

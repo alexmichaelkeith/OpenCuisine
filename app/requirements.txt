@@ -1,4 +1,4 @@
 Flask
-mysql-connector
-flask-wtf
+mysql-connector-python
+Flask-WTF
 passlib

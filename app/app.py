@@ -1,9 +1,14 @@
-from asyncio.windows_events import NULL
+from email.mime import image
 from flask import Flask, render_template, flash, redirect, url_for, session, logging, request
+from pkg_resources import yield_lines
 from wtforms import Form, StringField, TextAreaField, PasswordField, validators
 from passlib.hash import sha256_crypt
 import mysql.connector
 from functools import wraps
+import time
+
+# Wait 15 seconds for mySQL to initialize when inside of Docker
+#time.sleep(15)
 
 mydb = mysql.connector.connect(
     user='root',
@@ -13,6 +18,7 @@ mydb = mysql.connector.connect(
     database='opencuisine'
 )
 
+app = Flask(__name__)
 
 class RegisterForm(Form):
     name = StringField('Name', [validators.Length(min=1, max=50)])
@@ -25,8 +31,15 @@ class RegisterForm(Form):
     confirm = PasswordField('Confirm Password')
 
 class AddForm(Form):
-    name = StringField('Name', [validators.Length(min=1, max=50)])
-    color = StringField('Color', [validators.Length(min=1, max=50)])
+    title = StringField('Title', [validators.Length(min=1, max=50)])
+    total_time = StringField('Total Time', [validators.Length(min=1, max=50)])
+    yields = StringField('Yields', [validators.Length(min=1, max=50)])
+    ingredients = StringField('Ingredients', [validators.Length(min=1, max=50)])
+    instructions = StringField('Instructions', [validators.Length(min=1, max=50)])
+    image = StringField('Image', [validators.Length(min=1, max=50)])
+    host = StringField('Host', [validators.Length(min=1, max=50)])
+    links = StringField('Links', [validators.Length(min=1, max=50)])
+    nutrients = StringField('Nutrients', [validators.Length(min=1, max=50)])
 
 # Check if user logged in
 def is_logged_in(f):
@@ -49,8 +62,6 @@ def Recipes():
     return results
 
 
-app = Flask(__name__)
-
 @app.route('/')
 def home():
     return render_template('home.html')
@@ -72,12 +83,19 @@ def add():
     
     form = AddForm(request.form)
     if request.method == 'POST' and form.validate():
-         name = form.name.data
-         color = form.color.data
-
+         title = form.title.data
+         total_time = form.total_time.data
+         yields = form.yields.data
+         ingredients = form.ingredients.data
+         instructions = form.instructions.data
+         image = form.image.data
+         host = form.host.data
+         links = form.links.data
+         nutrients = form.nutrients.data
+         
          cur = mydb.cursor(dictionary=True)
-         sql = "INSERT INTO recipes (name, color) VALUES (%s, %s)"
-         val = (name, color)
+         sql = "INSERT INTO recipes (title, total_time, yields, ingredients, instructions, image, host, links, nutrients) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
+         val = (title, total_time, yields, ingredients, instructions, image, host, links, nutrients)
          cur.execute(sql, val)
          mydb.commit()
          cur.close()
