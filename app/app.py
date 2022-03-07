@@ -30,8 +30,10 @@ class RegisterForm(Form):
     ])
     confirm = PasswordField('Confirm Password')
 
+# Add Form Class
 class AddForm(Form):
-    title = StringField('Title', [validators.Length(min=1, max=50)])
+    title = StringField('Title', [validators.Length(min=1, max=200)])
+    body = TextAreaField('Body', [validators.Length(min=1)])
     total_time = StringField('Total Time', [validators.Length(min=1, max=50)])
     yields = StringField('Yields', [validators.Length(min=1, max=50)])
     ingredients = StringField('Ingredients', [validators.Length(min=1, max=50)])
@@ -72,36 +74,42 @@ def recipes():
     return render_template('recipes.html', recipes = Recipes())
 
 
-@app.route('/recipe/<string:name>/')
+@app.route('/recipe/<string:title>/')
 @is_logged_in
-def recipe(name):
-    return render_template('recipe.html', name=name)
+def recipe(title):
+    return render_template('recipe.html', title=title)
 
 
 @app.route('/add', methods=['GET', 'POST'])
+@is_logged_in
 def add():
-    
     form = AddForm(request.form)
     if request.method == 'POST' and form.validate():
-         title = form.title.data
-         total_time = form.total_time.data
-         yields = form.yields.data
-         ingredients = form.ingredients.data
-         instructions = form.instructions.data
-         image = form.image.data
-         host = form.host.data
-         links = form.links.data
-         nutrients = form.nutrients.data
-         
-         cur = mydb.cursor(dictionary=True)
-         sql = "INSERT INTO recipes (title, total_time, yields, ingredients, instructions, image, host, links, nutrients) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
-         val = (title, total_time, yields, ingredients, instructions, image, host, links, nutrients)
-         cur.execute(sql, val)
-         mydb.commit()
-         cur.close()
+        title = form.title.data
+        total_time = form.total_time.data
+        yields = form.yields.data
+        ingredients = form.ingredients.data
+        instructions = form.instructions.data
+        image = form.image.data
+        host = form.host.data
+        links = form.links.data
+        nutrients = form.nutrients.data
 
-         flash('Recipe has been added', 'success')
-         return redirect(url_for('recipes'))
+        # Create Cursor
+        cur = mydb.cursor()
+
+        # Execute
+        cur.execute("INSERT INTO recipes(title, total_time, yields, ingredients, instructions, image, host, links, nutrients) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s)",(title, total_time, yields, ingredients, instructions, image, host, links, nutrients))
+
+        # Commit to DB
+        mydb.commit()
+
+        #Close connection
+        cur.close()
+
+        flash('Recipe Created', 'success')
+
+        return redirect(url_for('recipes'))
 
     return render_template('add.html', form=form)
 
@@ -114,7 +122,7 @@ def register():
          name = form.name.data
          email = form.email.data
          username = form.username.data
-         password = sha256_crypt.encrypt(str(form.password.data))
+         password = sha256_crypt.hash(str(form.password.data))
 
          cur = mydb.cursor(dictionary=True)
          sql = "INSERT INTO users (name, email, username, password) VALUES (%s, %s, %s, %s)"
