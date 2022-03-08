@@ -1,0 +1,40 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+  <h1>Dashboard <small> Welcome {{session.username}}</small></h1>
+  <a class="btn btn-success" href="/add"> Add Recipe</a>
+  <hr>
+  <table class="table table-striped">
+    <tr>
+      <th>ID</th>
+      <th>Yields</th>
+      <th>Ingredients</th>
+      <th>Instrustions</th>
+      <th>Image</th>
+      <th>Host</th>
+      <th>Links</th>
+      <th>Nutrients</th>
+      <th></th>
+      <th></th>
+    </tr>
+    {% for recipe in recipes %}
+      <tr>
+        <td>{{recipe.id}}</td>
+        <td>{{recipe.yields}}</td>
+        <td>{{recipe.ingredients}}</td>
+        <td>{{recipe.instructions}}</td>
+        <td>{{recipe.image}}</td>
+        <td>{{recipe.host}}</td>
+        <td>{{recipe.links}}</td>
+        <td>{{recipe.nutrients}}</td>
+        <td><a href="edit_recipe/{{recipe.id}}" class="btn btn-default pull-right">Edit</a></td>
+        <td>
+          <form action="{{url_for('delete', id=recipe.id)}}" method="post">
+            <input type="hidden" name="_method" value="DELETE">
+            <input type="submit" value="Delete" class="btn btn-danger">
+          </form>
+        </td>
+      </tr>
+    {% endfor %}
+  </table>
+{% endblock %}

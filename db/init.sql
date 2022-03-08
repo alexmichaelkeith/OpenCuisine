@@ -2,6 +2,7 @@ CREATE DATABASE opencuisine;
 use opencuisine;
 
 CREATE TABLE recipes (
+  id INT(11) AUTO_INCREMENT PRIMARY KEY,
   title VARCHAR(20),
   total_time VARCHAR(10),
   yields VARCHAR(10),

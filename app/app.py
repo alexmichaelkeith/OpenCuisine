@@ -33,7 +33,6 @@ class RegisterForm(Form):
 # Add Form Class
 class AddForm(Form):
     title = StringField('Title', [validators.Length(min=1, max=200)])
-    body = TextAreaField('Body', [validators.Length(min=1)])
     total_time = StringField('Total Time', [validators.Length(min=1, max=50)])
     yields = StringField('Yields', [validators.Length(min=1, max=50)])
     ingredients = StringField('Ingredients', [validators.Length(min=1, max=50)])
@@ -67,6 +66,32 @@ def Recipes():
 @app.route('/')
 def home():
     return render_template('home.html')
+
+
+# Dashboard
+@app.route('/dashboard')
+@is_logged_in
+def dashboard():
+    # Create cursor
+    cur = mydb.cursor(dictionary=True)
+
+    # Get recipes
+    #result = cur.execute("SELECT * FROM recipes")
+    # Show recipes only from the user logged in 
+    result = cur.execute("SELECT * FROM recipes")
+
+    recipes = cur.fetchall()
+    for recipe in recipes:
+        print(recipe)
+    #try:
+    return render_template('dashboard.html', recipes=recipes)
+      
+    #except:
+        #msg = 'No Recipes Found'
+        #return render_template('dashboard.html', msg=msg)
+    # Close connection
+    cur.close()
+
 
 @app.route('/recipes')
 @is_logged_in
@@ -180,6 +205,27 @@ def logout():
     session.clear()
     return redirect(url_for('login'))
 
+
+
+# Delete Recipe
+@app.route('/delete/<string:id>', methods=['POST'])
+@is_logged_in
+def delete(id):
+    # Create cursor
+    cur = mydb.cursor()
+
+    # Execute
+    cur.execute("DELETE FROM articles WHERE id = %s", [id])
+
+    # Commit to DB
+    mydb.commit()
+
+    #Close connection
+    cur.close()
+
+    flash('Recipe Deleted', 'success')
+
+    return redirect(url_for('dashboard'))
 
 
 # main driver function
