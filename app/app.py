@@ -6,8 +6,9 @@ from passlib.hash import sha256_crypt
 import mysql.connector
 from functools import wraps
 import time
+import os
 
-# Wait 15 seconds for mySQL to initialize when inside of Docker
+# Wait 15 seconds for mySQL to initialize when running docker-compose
 #time.sleep(15)
 
 mydb = mysql.connector.connect(
@@ -31,7 +32,7 @@ class RegisterForm(Form):
     confirm = PasswordField('Confirm Password')
 
 # Add Form Class
-class AddForm(Form):
+class RecipeForm(Form):
     title = StringField('Title', [validators.Length(min=1, max=200)])
     total_time = StringField('Total Time', [validators.Length(min=1, max=50)])
     yields = StringField('Yields', [validators.Length(min=1, max=50)])
@@ -41,7 +42,6 @@ class AddForm(Form):
     host = StringField('Host', [validators.Length(min=1, max=50)])
     links = StringField('Links', [validators.Length(min=1, max=50)])
     nutrients = StringField('Nutrients', [validators.Length(min=1, max=50)])
-
 # Check if user logged in
 def is_logged_in(f):
     @wraps(f)
@@ -81,16 +81,16 @@ def dashboard():
     result = cur.execute("SELECT * FROM recipes")
 
     recipes = cur.fetchall()
+    cur.close()
     for recipe in recipes:
         print(recipe)
-    #try:
-    return render_template('dashboard.html', recipes=recipes)
+    try:
+        return render_template('dashboard.html', recipes=recipes)
       
-    #except:
-        #msg = 'No Recipes Found'
-        #return render_template('dashboard.html', msg=msg)
+    except:
+        msg = 'No Recipes Found'
+        return render_template('dashboard.html', msg=msg)
     # Close connection
-    cur.close()
 
 
 @app.route('/recipes')
@@ -108,7 +108,7 @@ def recipe(title):
 @app.route('/add', methods=['GET', 'POST'])
 @is_logged_in
 def add():
-    form = AddForm(request.form)
+    form = RecipeForm(request.form)
     if request.method == 'POST' and form.validate():
         title = form.title.data
         total_time = form.total_time.data
@@ -119,12 +119,11 @@ def add():
         host = form.host.data
         links = form.links.data
         nutrients = form.nutrients.data
-
         # Create Cursor
         cur = mydb.cursor()
 
         # Execute
-        cur.execute("INSERT INTO recipes(title, total_time, yields, ingredients, instructions, image, host, links, nutrients) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s)",(title, total_time, yields, ingredients, instructions, image, host, links, nutrients))
+        cur.execute("INSERT INTO recipes(title, total_time, yields, ingredients, instructions, image, host, links, nutrients, author) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",(title, total_time, yields, ingredients, instructions, image, host, links, nutrients, session['username']))
 
         # Commit to DB
         mydb.commit()
@@ -206,6 +205,59 @@ def logout():
     return redirect(url_for('login'))
 
 
+# Edit Recipe
+@app.route('/edit/<string:id>', methods=['GET', 'POST'])
+@is_logged_in
+def edit_article(id):
+    # Create cursor
+    cur = mydb.cursor(dictionary=True)
+
+    # Get recipe by id
+    result = cur.execute("SELECT * FROM recipes WHERE id = %s", [id])
+
+    recipe = cur.fetchone()
+    cur.close()
+    # Get form
+    form = RecipeForm(request.form)
+
+    # Populate recipe form fields
+    form.title.data = recipe['title']
+    form.total_time.data = recipe['total_time']
+    form.yields.data = recipe['yields']
+    form.ingredients.data = recipe['ingredients']
+    form.instructions.data = recipe['instructions']
+    form.image.data = recipe['image']
+    form.host.data = recipe['host']
+    form.links.data = recipe['links']
+    form.nutrients.data = recipe['nutrients']
+
+    if request.method == 'POST' and form.validate():
+        title = request.form['title']
+        total_time = request.form['total_time']
+        yields = request.form['yields']
+        ingredients = request.form['ingredients']
+        instructions = request.form['instructions']
+        image = request.form['image']
+        host = request.form['host']
+        links = request.form['links']
+        nutrients = request.form['nutrients']
+        # Create Cursor
+        cur = mydb.cursor(dictionary=True)
+        app.logger.info(title)
+        # Execute
+        cur.execute ("UPDATE recipes SET title=%s, total_time=%s, yields=%s, ingredients=%s, instructions=%s, image=%s, host=%s, links=%s, nutrients=%s WHERE id=%s",(title, total_time, yields, ingredients, instructions, image, host, links, nutrients, id))
+        # Commit to DB
+        mydb.commit()
+
+        #Close connection
+        cur.close()
+
+        flash('Recipe Updated', 'success')
+
+        return redirect(url_for('dashboard'))
+
+    return render_template('edit.html', form=form)
+
 
 # Delete Recipe
 @app.route('/delete/<string:id>', methods=['POST'])
@@ -215,7 +267,7 @@ def delete(id):
     cur = mydb.cursor()
 
     # Execute
-    cur.execute("DELETE FROM articles WHERE id = %s", [id])
+    cur.execute("DELETE FROM recipes WHERE id = %s", [id])
 
     # Commit to DB
     mydb.commit()
@@ -231,5 +283,6 @@ def delete(id):
 # main driver function
 if __name__ == '__main__':
   
-    app.secret_key='secret_key123'
+    app.secret_key = 'devtempkey'
+    #app.secret_key = os.urandom(12).hex()
     app.run(port = 5000, host="0.0.0.0", debug=True)

@@ -4,6 +4,7 @@ use opencuisine;
 CREATE TABLE recipes (
   id INT(11) AUTO_INCREMENT PRIMARY KEY,
   title VARCHAR(20),
+  author VARCHAR(100),
   total_time VARCHAR(10),
   yields VARCHAR(10),
   ingredients VARCHAR(10),
@@ -11,7 +12,9 @@ CREATE TABLE recipes (
   image VARCHAR(10),
   host VARCHAR(10),
   links VARCHAR(10),
-  nutrients VARCHAR(10)
+  nutrients VARCHAR(10),
+  create_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+
 );
 CREATE TABLE users (
   id INT(11) AUTO_INCREMENT PRIMARY KEY,
