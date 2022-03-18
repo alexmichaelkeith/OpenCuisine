@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://github.com/alexmichaelkeith/OpenCuisine/blob/main/icon.png">
+  <img src="https://github.com/alexmichaelkeith/OpenCuisine/blob/main/OpenCuisine.svg">
 </p>
 
 <h1 align="center">         
