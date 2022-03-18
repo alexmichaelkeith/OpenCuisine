@@ -13,10 +13,18 @@ A recipe management Flask web application implementing an SQL database
 
 # Installation
 
+## Build
+
+```shell
+docker-compose build
+```
+
+## Run
 
 ```shell
 docker-compose up -d
 ```
+
 # Requirements
 Docker
 Docker-compose
