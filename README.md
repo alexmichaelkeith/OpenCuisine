@@ -1,18 +1,21 @@
 
-![OpenCuisine](OpenCuisine.svg)
+<p align="center">
+  <img width="460" height="300" src="OpenCuisine.svg">
+</p>
 
 
+<h3 align="center">
 
+[![MIT License](https://img.shields.io/apm/l/atomic-design-ui.svg?)](https://github.com/alexmichaelkeith/OpenCuisine/blob/main/LICENSE)
+</h3>
 
-[![MIT License](https://img.shields.io/apm/l/atomic-design-ui.svg?)](https://github.com/tterb/atomic-design-ui/blob/master/LICENSEs)
-[![GPLv3 License](https://img.shields.io/badge/License-GPL%20v3-yellow.svg)](https://opensource.org/licenses/)
-[![AGPL License](https://img.shields.io/badge/license-AGPL-blue.svg)](http://www.gnu.org/licenses/agpl-3.0)
+<h1 align="center">
+OpenCuisine
+</h1>
 
-
-# OpenCuisine
-
-A brief description of what this project does and who it's for
-
+<h4 align="center">
+A recipe management Flask web application implementing an SQL database
+</h4>
 
 ## Features
 
@@ -40,21 +43,23 @@ Insert gif or link to demo
 
 ## Installation
 
-Install my-project with npm
 
+Installation with Docker
 ```bash
-  npm install my-project
-  cd my-project
+docker-compose pull OpenCuisine
 ```
-    
+
+Installation with Git
+```bash
+  git clone https://github.com/alexmichaelkeith/OpenCuisine
+  cd OpenCuisine
+```
+
 ## Deployment
-
-To deploy this project run
-
 ```bash
-  npm run deploy
+cd OpenCuisine
+docker-compose up -d
 ```
-
 
 ## Documentation
 
@@ -81,9 +86,9 @@ Answer 2
 
 ## Tech Stack
 
-**Client:** React, Redux, TailwindCSS
+**Client:** Python Flask Web-Application
 
-**Server:** Node, Express
+**Server:** MySQL database
 
 
 ## Run Locally
@@ -115,17 +120,17 @@ Start the server
 
 ## License
 
-[MIT](https://choosealicense.com/licenses/mit/)
+[MIT](https://github.com/alexmichaelkeith/OpenCuisine/blob/main/LICENSE)
 
 
 ## Support
 
-For support, email fake@fake.com or join our Slack channel.
+For support, email alex.michael.keith@gmail.com
 
 
 ## Feedback
 
-If you have any feedback, please reach out to us at fake@fake.com
+If you have any feedback, please reach out to us at alex.michael.keith@gmail.com
 
 
 ## Contributing
