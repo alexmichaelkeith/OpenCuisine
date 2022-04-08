@@ -81,7 +81,9 @@ Answer 2
 
 - Additional browser support
 
-- Add more integrations
+- Abilty to add custom fields
+
+- Seperate view / edit accounts
 
 
 ## Tech Stack
