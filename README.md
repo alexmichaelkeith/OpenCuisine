@@ -86,11 +86,11 @@ Answer 2
 - Seperate view / edit accounts
 
 
-## Tech Stack
+## Docker Tech Stack
 
-**Client:** Python Flask Web-Application
+**Web App:** Python-Flask
 
-**Server:** MySQL database
+**Database:** MySQL
 
 
 ## Run Locally
