@@ -19,7 +19,6 @@ A recipe management Flask web application implementing an SQL database
 
 ## Features
 
-- Light/dark mode toggle
 - Live previews
 - Fullscreen mode
 - Cross platform
@@ -27,13 +26,7 @@ A recipe management Flask web application implementing an SQL database
 
 ## Usage/Examples
 
-```javascript
-import Component from 'my-project'
 
-function App() {
-  return <Component />
-}
-```
 
 
 ## Demo
